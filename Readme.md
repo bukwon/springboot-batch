@@ -1,0 +1,2 @@
+- application.yml에서 url: jdbc:h2:mem:db_dev;MODE=MYSQL mem(메모리모드) 설정 안해주면 실행 x
+- 배치 안에 여러 잡들이 존재 그리고 잡 안에는 스텝들이 있고 스텝 안엔 여러 태스클릿이 존재

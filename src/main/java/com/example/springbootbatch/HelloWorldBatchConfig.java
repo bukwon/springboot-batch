@@ -1,50 +1,42 @@
 package com.example.springbootbatch;
 
+// HelloWorldBatchConfig.java
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepScope;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 
+@Slf4j
 @Configuration
-@EnableBatchProcessing
 public class HelloWorldBatchConfig {
-
-    private final JobBuilderFactory jobBuilderFactory;
-    private final StepBuilderFactory stepBuilderFactory;
-
-    public HelloWorldBatchConfig(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
-        this.jobBuilderFactory = jobBuilderFactory;
-        this.stepBuilderFactory = stepBuilderFactory;
-    }
-
     @Bean
-    public Job helloWorldJob() {
-        return jobBuilderFactory.get("helloWorldJob")
-                .incrementer(new RunIdIncrementer())
-                .start(helloWorldStep())
+    public Job helloJob(JobRepository jobRepository, Step simpleStep1) {
+        return new JobBuilder("helloJob", jobRepository)
+                .start(simpleStep1)
                 .build();
     }
 
     @Bean
-    public Step helloWorldStep() {
-        return stepBuilderFactory.get("helloWorldStep")
-                .tasklet(helloWorldTasklet())
+    public Step helloStep1(JobRepository jobRepository, Tasklet helloStep1Tasklet1, PlatformTransactionManager platformTransactionManager) {
+        return new StepBuilder("helloStep1Tasklet1", jobRepository)
+                .tasklet(helloStep1Tasklet1, platformTransactionManager)
                 .build();
     }
 
-    @StepScope
     @Bean
-    public Tasklet helloWorldTasklet() {
-        return (contribution, chunkContext) -> {
-            System.out.println("Hello, World! Spring Batch");
+    public Tasklet helloStep1Tasklet1() {
+        return ((contribution, chunkContext) -> {
+            log.info("Hello World");
+            System.out.println("Hello World");
             return RepeatStatus.FINISHED;
-        };
+        });
     }
 }
