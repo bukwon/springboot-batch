@@ -32,16 +32,14 @@ public class HelloJobConfig {
         return new StepBuilder("helloStep1Tasklet", jobRepository)
                 .tasklet(helloStep1Tasklet, platformTransactionManager)
                 .build();
-    }   // @JobScope 기능은 Job이 실행되기 전까지 유보시킴
+    }
 
     @StepScope
     @Bean
     public Tasklet helloStep1Tasklet() {
         return ((contribution, chunkContext) -> {
-            System.out.println("Hello World 1/1");
+            System.out.println("Hello World 1-1");
             return RepeatStatus.FINISHED;
         });
     }
 }
-
-// Step == @JobScope, 작업 == @StepScope
